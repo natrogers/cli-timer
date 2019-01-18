@@ -9,26 +9,43 @@ import argparse
 
 
 def handle_args():
-    pass
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("time", dest="time", type=int, help="specify a starting time in seconds")
+    parser.add_argument("-n", "--name", dest="name", type=string, help="Name the timer")
+    parser.add_argument("-q", "--quiet", action="store_true", default=False, dest="quiet" help="Do not show countdown")
+
+    return parser.parse_args()
 
 
-def convert_to_sec(arg_time):
-    pass
+def alarm(name=''):
+    subprocess.Popen("say 'Ding, ding. {} timer is done.'".format(name), shell=True)
 
 
-def timer(sec):
+def quiet_timer(sec):
     # https://www.geeksforgeeks.org/timer-objects-python/
     # https://stackoverflow.com/questions/18406165/creating-a-timer-in-python
-    pass
+    time.sleep(sec)
+    alarm()
 
 
-def print_to_terminal():
+def timer_print_to_terminal(sec):
     # https://stackoverflow.com/questions/2122385/dynamic-terminal-printing-with-python
-    pass
+    while sec > 0:
+        sys.stdout.write("\r{}".format(sec))
+        sys.stdout.flush()
+        time.sleep(1.0)
+        seconds -= 1
+    alarm()
 
 
 def main():
-    pass
+    args = handle_args()
+    if args.quiet:
+        quiet_timer(args.time)
+    else:
+        timer_print_to_terminal(args.time)
+
 
 
 if __name__ == "__main__":
