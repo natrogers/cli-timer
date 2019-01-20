@@ -2,10 +2,10 @@
 
 # @author: N Rogers
 
+import argparse
+import subprocess
 import sys
 import time
-import subprocess
-import argparse
 
 
 def handle_args():
@@ -22,13 +22,24 @@ def alarm(name=''):
     subprocess.Popen("say 'Ding, ding. {} timer is done.'".format(name), shell=True)
 
 
-def timer_print_to_terminal(sec):
-    # https://stackoverflow.com/questions/2122385/dynamic-terminal-printing-with-python
-    while sec > 0:
-        sys.stdout.write("\r{}".format(sec))
-        sys.stdout.flush()
-        time.sleep(1.0)
-        sec -= 1
+def cycle_timer():
+    sys.stdout.flush()
+    time.sleep(1.0)
+
+
+def timer_print_to_terminal(sec, name=False):
+    if name:
+        while sec > 0:
+            sys.stdout.write("\r{} {}".format(sec, name))
+            cycle_timer()
+            sec -= 1
+        alarm(name)
+    else:
+        while sec > 0:
+            sys.stdout.write("\r{}".format(sec))
+            cycle_timer()
+            sec -= 1
+        alarm()
 
 
 def main():
@@ -36,15 +47,11 @@ def main():
     if args.quiet:
         time.sleep(args.time)
         if args.name:
-            alarm(args.name)
+            alarm(name=args.name)
         else:
             alarm()
     else:
-        timer_print_to_terminal(args.time)
-        if args.name:
-            alarm(args.name)
-        else:
-            alarm()
+        timer_print_to_terminal(args.time, args.name)
 
 
 if __name__ == "__main__":
